@@ -1,0 +1,8 @@
+docker pull mcr.microsoft.com/mssql/server:2019-latest
+
+docker images
+
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=putwhatpasswordyouwanT1$' -e 'MSSQL_AGENT_ENABLED=True' -p 49455:1433 -d mcr.microsoft.com/mssql/server:2019-latest 
+
+docker cp pokemon.bak mystifying_raman:/home
+

@@ -1,0 +1,115 @@
+Kubernetes Notes
+Deploy your MySQL database on Kubernetes
+To start, you need to create two YAML files, assuming you are statically defining your persistent volume. One should define your deployment, including the image you’re using, your credentials, and your persistent volume names and paths (see an example from the Kubernetes documentation):
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+
+The other defines your PersistentVolume (PV) and PersistentVolumeClaim (PVC), including storage capacity, access modes, and path (see an example):
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+Once your files are defined, you are ready to deploy them. Deploy your PV and PVC definitions first, followed by your deployment definition. You can do this by using:
+
+	kubectl apply -f {file source}
+
+After this is done, you need to verify that the deployment went as expected. You can do this by checking the deployment specs:
+
+	kubectl describe deployment mysql
+
+Checking the pods that were created:
+
+	kubectl get pods -l app=mysql
+
+And inspecting your PersistentVolumeClaim:
+
+	kubectl describe pvc mysql-pv-claim
+	
+How can you access your new MySQL instance?
+
+The YAML files we showed in the previous section creates a service that let Pods in the cluster access the MySQL database. We are using Service option clusterIP: None to ensure the Service DNS name resolve to Pod’s IP address. This is because, in our example, there is only one Pod behind the database service.
+
+Here is how to run a MySQL client and connect to your MySQL instance running on Kubernetes:
+
+kubectl run -it –rm –image=mysql:5.6 –restart=Never mysql-client — mysql -h mysql -ppassword
+
+This creates a new Pod running a MySQL client and connects to the server using the Service, with direct DNS resolution.
+
+If the connection is successful, you should see a MySQL command prompt, like this:
+
+mysql>
+
+How can you delete your MySQL instance?
+
+Use the following commands to delete the objects you deployed as per the instructions above:
+
+kubectl delete deployment,svc mysql
+kubectl delete pvc mysql-pv-claim
+kubectl delete pv mysql-pv-volume
+
+Please note that if you manually provisioned a PersistentVolume, it needs to be deleted as well. However, if you dynamically provisioned the volume, it will be deleted together with the PersistentVolumeClaim.
+

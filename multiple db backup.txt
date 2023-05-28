@@ -1,0 +1,46 @@
+docker cp '.\BowlingLeagueExample_backup_2022_03_02_174923_2852688.bak' nifty_vaughan: '/home/BowlingLeagueExample_backup_2022_03_02_174923_2852688.bak'
+docker cp '.\SalesOrdersExample.bak  nifty_vaughan: '/home/SalesOrdersExample.bak'
+docker cp '.\EntertainmentAgencyExample.bak nifty_vaughan: '/home/EntertainmentAgencyExample.bak'
+docker cp '.\SchoolSchedulingExample.bak nifty_vaughan: '/home/SchoolSchedulingExample.bak'
+docker cp '.\RecipesExample_backup_2022_03_02_174923_2872651.bak nifty_vaughan: '/home/RecipesExample_backup_2022_03_02_174923_2872651.bak'
+docker cp '.\sample_LogBackup_2022-02-08_17-43-46.bak nifty_vaughan: '/home/sample_LogBackup_2022-02-08_17-43-46.bak'
+
+BACKUP DATABASE [BowlingLeagueExample] TO  DISK = N'/var/opt/mssql/data/BowlingLeagueExample_backup.bak' WITH NOFORMAT, NOINIT,  NAME = N'BowlingLeagueExample-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10
+GO
+declare @backupSetId as int
+select @backupSetId = position from msdb..backupset where database_name=N'BowlingLeagueExample' and backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N'BowlingLeagueExample' )
+if @backupSetId is null begin raiserror(N'Verify failed. Backup information for database ''BowlingLeagueExample'' not found.', 16, 1) end
+RESTORE VERIFYONLY FROM  DISK = N'/var/opt/mssql/data/BowlingLeagueExample.mdf' WITH  FILE = @backupSetId,  NOUNLOAD,  NOREWIND
+GO
+
+BACKUP DATABASE [EntertainmentAgencyExample] TO  DISK = N'/var/opt/mssql/data/EntertainmentAgencyExample_backup.bak' WITH NOFORMAT, NOINIT,  NAME = N'EntertainmentAgencyExample-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10, CHECKSUM
+GO
+declare @backupSetId as int
+select @backupSetId = position from msdb..backupset where database_name=N'EntertainmentAgencyExample' and backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N'EntertainmentAgencyExample' )
+if @backupSetId is null begin raiserror(N'Verify failed. Backup information for database ''EntertainmentAgencyExample'' not found.', 16, 1) end
+RESTORE VERIFYONLY FROM  DISK = N'/home/EntertainmentAgencyExample.bak' WITH  FILE = @backupSetId,  NOUNLOAD,  NOREWIND
+GO
+
+BACKUP DATABASE [RecipesExample] TO  DISK = N'/var/opt/mssql/data/RecipesExample_backup.bak' WITH NOFORMAT, NOINIT,  NAME = N'RecipesExample-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10, CHECKSUM
+GO
+declare @backupSetId as int
+select @backupSetId = position from msdb..backupset where database_name=N'RecipesExample' and backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N'RecipesExample' )
+if @backupSetId is null begin raiserror(N'Verify failed. Backup information for database ''RecipesExample'' not found.', 16, 1) end
+RESTORE VERIFYONLY FROM  DISK = N'/var/opt/mssql/data/RecipesExample.mdf' WITH  FILE = @backupSetId,  NOUNLOAD,  NOREWIND
+GO
+
+BACKUP DATABASE [SalesOrdersExample] TO  DISK = N'/var/opt/mssql/data/SalesOrdersExample_backup.bak' WITH NOFORMAT, NOINIT,  NAME = N'SalesOrdersExample-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10, CHECKSUM
+GO
+declare @backupSetId as int
+select @backupSetId = position from msdb..backupset where database_name=N'SalesOrdersExample' and backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N'SalesOrdersExample' )
+if @backupSetId is null begin raiserror(N'Verify failed. Backup information for database ''SalesOrdersExample'' not found.', 16, 1) end
+RESTORE VERIFYONLY FROM  DISK = N'/var/opt/mssql/data/SalesOrdersExample.mdf' WITH  FILE = @backupSetId,  NOUNLOAD,  NOREWIND
+GO
+
+BACKUP DATABASE [SchoolSchedulingExample] TO  DISK = N'/var/opt/mssql/data/SchoolSchedulingExample.bak' WITH NOFORMAT, NOINIT,  NAME = N'SchoolSchedulingExample-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10, CHECKSUM
+GO
+declare @backupSetId as int
+select @backupSetId = position from msdb..backupset where database_name=N'SchoolSchedulingExample' and backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N'SchoolSchedulingExample' )
+if @backupSetId is null begin raiserror(N'Verify failed. Backup information for database ''SchoolSchedulingExample'' not found.', 16, 1) end
+RESTORE VERIFYONLY FROM  DISK = N'/var/opt/mssql/data/SchoolSchedulingExample.mdf' WITH  FILE = @backupSetId,  NOUNLOAD,  NOREWIND
+GO

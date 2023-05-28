@@ -1,0 +1,163 @@
+	/* Provider Block */
+	terraform {
+	  required_providers {
+		google = {
+		  source = "hashicorp/google"
+		}
+	  }
+	}
+	provider "google" {
+	  project = "formidable-bank-345018"
+	  region  = "us-central1"
+	  zone    = "us-central1-a"
+	}
+	resource "google_compute_network" "vpc_network" {
+	  name = "terraform-network"
+	}
+
+	/* MySQL Database 1 */
+	resource "google_sql_database" "database_label_terraform1" {
+	  name     = "mysql-grifffin-development-db"
+	  instance = google_sql_database_instance.mysql1-in-1.name
+	}
+
+	/* MySQL Instance 1 */
+	resource "google_sql_database_instance" "mysql1-in-1" {
+	  name             = "mysql-grifffin-instance-1"
+	  region           = "us-central1"
+	  database_version = "MYSQL_5_7"
+	  settings {
+		tier = "db-f1-micro"
+		
+	  }
+	  deletion_protection = "false"
+	}
+
+	/* MYSQL Database 2 */
+	resource "google_sql_database" "database_label_terraform2" {
+	  name     = "mysql-griffin-integrationtest-db"
+	  instance = google_sql_database_instance.mysql-in-2.name
+	}
+
+	/* MYSQL Instance 2 */
+	resource "google_sql_database_instance" "mysql-in-2" {
+	  name             = "mysql-griffin-instance-2"
+	  region           = "us-central1"
+	  database_version = "MYSQL_5_7"
+	  settings {
+		tier = "db-f1-micro"
+	  }
+	  deletion_protection = "false"
+	}
+
+	/* MYSQL Database 3 */
+	resource "google_sql_database" "database_label_terraform3" {
+	  name     = "mysql-griffin-qa-db"
+	  instance = google_sql_database_instance.mysql-in-3.name
+	}
+
+	/* MYSQL Instance 3 */
+	resource "google_sql_database_instance" "mysql-in-3" {
+	  name             = "mysql-griffin-instance-3"
+	  region           = "us-central1"
+	  database_version = "MYSQL_5_7"
+	  settings {
+		tier = "db-f1-micro"
+	  }
+	  deletion_protection = "false"
+	}
+	
+	/* PostgreSQL Database 1 */
+	resource "google_sql_database" "database_label_terraform4" {
+	  name     = "postgres-griffin-development-db"
+	  instance = google_sql_database_instance.postgres-in-1.name
+	}
+
+	/* PostgreSQL Instance 1 */
+	resource "google_sql_database_instance" "postgres-in-1" {
+	  name             = "postgres-griffin-instance-1"
+	  region           = "us-central1"
+	  database_version = "POSTGRES_11"
+	  settings {
+		tier = "db-f1-micro"
+		
+
+	  }
+	  deletion_protection = "false"
+	}
+
+	/* PostgreSQL Database 2 */
+	resource "google_sql_database" "database_label_terraform5" {
+	  name     = "postgres-griffin-integrationtest-db"
+	  instance = google_sql_database_instance.postgres-in-2.name
+	}
+
+	/* PostgreSQL Instance 2 */
+	resource "google_sql_database_instance" "postgres-in-2" {
+	  name             = "postgres-griffin-instance-2"
+	  region           = "us-central1"
+	  database_version = "POSTGRES_11"
+	  settings {
+		tier = "db-f1-micro"
+	  }
+	  deletion_protection = "false"
+	}
+
+	/* PostgreSQL Database 3 */
+	resource "google_sql_database" "database_label_terraform6" {
+	  name     = "postgres-griffin-qa-db"
+	  instance = google_sql_database_instance.postgres-in-3.name
+	}
+
+	/* PostgreSQL Instance 3 */
+	resource "google_sql_database_instance" "postgres-in-3" {
+	  name             = "postgres-griffin-instance-3"
+	  region           = "us-central1"
+	  database_version = "POSTGRES_11"
+	  settings {
+		tier = "db-f1-micro"
+	  }
+	  deletion_protection = "false"
+	}
+
+/* User 1 */
+	resource "google_sql_user" "mysql-development-user" {
+	  name     = "mysql-development-user"
+	  instance = google_sql_database_instance.mysql1-in-1.name
+	  password = "notSecure"
+	}
+	
+	/* User 2 */
+	resource "google_sql_user" "mysql-integrationtest-user" {
+	  name     = "mysql-integrationtest-user"
+	  instance = google_sql_database_instance.mysql-in-2.name
+	  password = "notSecure"
+	}
+	
+	/* User 3 */
+	resource "google_sql_user" "mysql-qa-user" {
+	  name     = "mysql-qa-user"
+	  instance = google_sql_database_instance.mysql-in-3.name
+	  password = "notSecure"
+	}
+	
+	/* User 4 */
+	resource "google_sql_user" "postgres-development-user" {
+	  name     = "postgres-development-user"
+	  instance = google_sql_database_instance.postgres-in-1.name
+	  password = "notSecure"
+	}
+	
+	/* User 5 */
+	resource "google_sql_user" "postgres-integrationtest-user" {
+	  name     = "postgres-integrationtest-user"
+	  instance = google_sql_database_instance.postgres-in-3.name
+	  password = "notSecure"
+	}
+	
+	/* User 6 */
+	resource "google_sql_user" "postgres-qa-user" {
+	  name     = "postgres-qa-user"
+	  instance = google_sql_database_instance.postgres-in-3.name
+	  password = "notSecure"
+	}

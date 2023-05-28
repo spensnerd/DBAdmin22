@@ -1,0 +1,29 @@
+cat <<EOF >./kustomization.yaml
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=CIT326BYUIpw
+EOF
+
+
+
+
+kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h wordpress-mysql -pCIT326BYUIpw
+
+show databases;
+
+use wordpress;
+
+show tables;
+
+select post_date, post_name, post_content from wp_posts;
+
+kubectl get services
+
+kubectl get pods
+
+kubectl delete pod wordpress-mysql-5898fbbd5c-kpvtz
+
+kubectl describe pod 
+
+kubectl scale --replicas=0

@@ -1,0 +1,85 @@
+Entertainment Agency Database
+1. “Display agents and the engagement dates they booked, sorted by booking start date.”
+
+(Hint: The solution requires a JOIN of two tables.)
+
+You can find the solution in CH08_Agents_Booked_Dates (111 rows).
+
+SELECT Agents.AgtFirstName
+, Agents.AgtLastName
+, Engagements.StartDate
+, Engagements.EndDate
+FROM Agents INNER JOIN Engagements
+ON Agents.AgentID = Engagements.AgentID
+ORDER BY Engagements.StartDate;
+
+2. “List customers and the entertainers they booked.”
+
+(Hint: The solution requires a JOIN of more than two tables.)
+
+You can find the solution in CH08_Customers_Booked_Entertainers (75 rows).
+
+SELECT DISTINCT Customers.CustFirstName
+ , Customers.CustLastName
+ , Entertainers.EntStageName
+FROM ((agents.Customers INNER JOIN agents.Engagements
+ON Customers.CustomerID = Engagements.CustomerID)
+INNER JOIN dbo.Entertainers
+ON Entertainers.EntertainerID = Engagements.EntertainerID)
+
+3. “Find the agents and entertainers who live in the same postal code.”
+
+(Hint: The solution requires a JOIN on matching values.)
+
+You can find the solution in CH08_Agents_Entertainers_Same_Postal (10 rows).
+
+SELECT DISTINCT Customers.CustFirstName
+, Customers.CustLastName
+FROM ((agents.Customers INNER JOIN agents.Engagements
+ON Customers.CustomerID = Engagements.CustomerID)
+INNER JOIN entertainers.Entertainer_Members
+ON Engagements.CustomerID = Customers.CustomerID)
+
+Bowling League Database
+1. “List the bowling teams and all the team members.”
+
+(Hint: The solution requires a JOIN of two tables.)
+
+You can find the solution in CH08_Teams_And_Bowlers (32 rows).
+
+SELECT CONCAT(Bowlers.BowlerFirstName, ' ', Bowlers.BowlerLastName) AS Bowler
+, Bowlers.TeamID
+, Teams.TeamName
+FROM team.Bowlers
+INNER JOIN Teams
+ON Teams.TeamID = Bowlers.TeamID
+
+2. “Display the bowlers, the matches they played in, and the bowler game scores.”
+
+(Hint: The solution requires a JOIN of more than two tables.)
+
+
+You can find the solution in CH08_Bowler_Game_Scores (1,344 rows).
+
+SELECT 
+CONCAT(Bowlers.BowlerFirstName, ' ', Bowlers.BowlerLastName) AS Bowler
+, Bowlers.BowlerID
+, Bowler_Scores.RawScore
+, Bowler_Scores.GameNumber
+FROM 
+team.Bowlers
+INNER JOIN team.Bowler_Scores
+ON bowlers.BowlerID = Bowler_Scores.BowlerID
+
+
+3. “Find the bowlers who live in the same ZIP Code.”
+
+(Hint: The solution requires a JOIN on matching values, and be sure to not match bowlers with themselves.)
+
+You can find the solution in CH08_Bowlers_Same_ZipCode (92 rows).
+
+SELECT DISTINCT
+CONCAT(Bowlers.BowlerFirstName, ' ', Bowlers.BowlerLastName) AS Bowler
+, Bowlers.BowlerZip
+FROM team.Bowlers
+ORDER BY BowlerZip
